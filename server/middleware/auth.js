@@ -1,19 +1,20 @@
 const catchAsyncErrors = require("./catchAsyncError");
-const UserDatabase = require("../model/user.schema");
+const Errorhandler = require("../utils/errorhandler");
 const jwt = require("jsonwebtoken");
-const ErrorHandler = require("../utils/errorHandler");
+const UserDatabase = require("../model/user.schema");
 
-// Check if user is authenticated or not
 exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
+  // This is a middleware function that checks if the user is logged in or not and then passes the request to the next function in the route
   const { token } = req.cookies;
 
   if (!token) {
-    return next(new ErrorHandler("Login first to access this resource", 401));
+    // If the user is not logged in, then the token will not be present in the cookies and hence the user will not be able to access the protected routes
+    return next(new Errorhandler("Login first to access this resource", 401));
   }
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
 
-  req.user = await UserDatabase.findById(decoded.id);
+  req.user = await UserDatabase.findById(decodedData.id);
 
   next();
 });
