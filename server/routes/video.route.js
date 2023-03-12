@@ -6,6 +6,8 @@ const {
   updateVideo,
   deleteVideo,
   addView,
+  likeVideo,
+  dislikeVideo,
 } = require("../controllers/video.controller");
 
 const { isAuthenticatedUser } = require("../middleware/auth");
@@ -17,6 +19,9 @@ VideoRouter.route("/video/:id")
   .get(getSingleVideo)
   .put(isAuthenticatedUser, updateVideo)
   .delete(isAuthenticatedUser, deleteVideo);
+
+VideoRouter.route("/video/like/:id").put(isAuthenticatedUser, likeVideo);
+VideoRouter.route("/video/dislike/:id").put(isAuthenticatedUser, dislikeVideo);
 
 VideoRouter.route("/video/view/:id").put(addView);
 
