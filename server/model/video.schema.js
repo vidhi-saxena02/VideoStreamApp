@@ -31,6 +31,14 @@ const VideoSchema = new mongoose.Schema({
   },
 
   likes: {
+    type: [String],
+    default: [],
+  },
+  dislikes: {
+    type: [String],
+    default: [],
+  },
+  likeCount: {
     type: Number,
     default: 0,
   },
@@ -38,7 +46,7 @@ const VideoSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  dislikes: {
+  dislikeCount: {
     type: Number,
     default: 0,
   },

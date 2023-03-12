@@ -78,3 +78,62 @@ exports.addView = catchAsyncErrors(async (req, res, next) => {
     video,
   });
 });
+
+exports.likeVideo = catchAsyncErrors(async (req, res, next) => {
+  const video = await VideoDatabase.findById(req.params.id);
+  if (!video) {
+    return next(new ErrorHandler("Video not found", 404));
+  }
+
+  // console.log(req.user._id);
+
+  const likeVideo = await VideoDatabase.findByIdAndUpdate(
+    req.params.id,
+    {
+      $addToSet: { likes: req.user._id },
+      $pull: { dislikes: req.user._id },
+    },
+    {
+      returnDocument: "after",
+    }
+  );
+
+  // console.log(likeVideo);
+  likeVideo.likeCount += 1;
+  if (likeVideo.dislikeCount > 0) {
+    likeVideo.dislikeCount -= 1;
+  }
+  res.status(200).json({
+    success: true,
+    likeVideo,
+    message: "Video liked successfully",
+  });
+});
+exports.dislikeVideo = catchAsyncErrors(async (req, res, next) => {
+  // console.log(typeof req.user._id);
+  const video = await VideoDatabase.findById(req.params.id);
+  if (!video) {
+    return next(new ErrorHandler("Video not found", 404));
+  }
+
+  const dislikeVideo = await VideoDatabase.findByIdAndUpdate(
+    req.params.id,
+    {
+      $addToSet: { dislikes: req.user._id },
+      $pull: { likes: req.user._id },
+    },
+    {
+      returnDocument: "after",
+    }
+  );
+  // console.log(dislikeVideo);
+  dislikeVideo.dislikeCount += 1;
+  if (dislikeVideo.likeCount > 0) {
+    dislikeVideo.likeCount -= 1;
+  }
+  res.status(200).json({
+    success: true,
+    dislikeVideo,
+    message: "Video disliked successfully",
+  });
+});
