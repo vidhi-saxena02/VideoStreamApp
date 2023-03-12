@@ -17,18 +17,38 @@ const CommentSchema = new mongoose.Schema({
     maxLength: [1000, "Comment cannot exceed 1000 characters"],
     minLength: [1, "Comment must be at least 1 characters"],
   },
-  likes: {
-    type: Number,
-    default: 0,
-  },
+  likes: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      like: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
   dislikes: {
     type: Number,
     default: 0,
   },
-  replies: {
-    type: [String],
-    default: [],
-  },
+  replies: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      reply: {
+        type: String,
+        required: [true, "Please enter a reply"],
+        maxLength: [1000, "Reply cannot exceed 1000 characters"],
+        minLength: [4, "Reply must be at least 4 characters"],
+      },
+    },
+  ],
   replyCount: {
     type: Number,
     default: 0,
