@@ -137,3 +137,11 @@ exports.dislikeVideo = catchAsyncErrors(async (req, res, next) => {
     message: "Video disliked successfully",
   });
 });
+
+exports.getVideos = catchAsyncErrors(async (req, res, next) => {
+  const videos = await VideoDatabase.find();
+  res.status(200).json({
+    success: true,
+    videos,
+  });
+});

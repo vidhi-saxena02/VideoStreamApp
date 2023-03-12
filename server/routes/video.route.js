@@ -8,9 +8,12 @@ const {
   addView,
   likeVideo,
   dislikeVideo,
+  getVideos,
 } = require("../controllers/video.controller");
 
 const { isAuthenticatedUser } = require("../middleware/auth");
+
+VideoRouter.route("/videos").get(getVideos);
 
 // add a new video
 
