@@ -3,9 +3,6 @@ const VideoDatabase = require("../model/video.schema");
 const ErrorHandler = require("../utils/errorHandler");
 const commentDatabase = require("../model/comments.schema");
 
-exports.likeComment = catchAsyncErrors(async (req, res, next) => {});
-exports.dislikeComment = catchAsyncErrors(async (req, res, next) => {});
-
 exports.commentVideo = catchAsyncErrors(async (req, res, next) => {
   const video = await VideoDatabase.findById(req.params.id);
   if (!video) {
@@ -25,7 +22,25 @@ exports.commentVideo = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-exports.replyComment = catchAsyncErrors(async (req, res, next) => {});
+exports.replyComment = catchAsyncErrors(async (req, res, next) => {
+  const comment = await commentDatabase.findById(req.params.id);
+  if (!comment) {
+    return next(new ErrorHandler("Comment not found", 404));
+  }
+  const reply = {
+    user: req.user.id,
+    reply: req.body.reply,
+  };
+
+  comment.replies.push(reply);
+  comment.replyCount = comment.replies.length;
+  await comment.save({ validateBeforeSave: false });
+  res.status(201).json({
+    success: true,
+    message: "Reply added successfully",
+    comment,
+  });
+});
 
 exports.getAllComments = catchAsyncErrors(async (req, res, next) => {
   const video = await VideoDatabase.findById(req.params.id);
